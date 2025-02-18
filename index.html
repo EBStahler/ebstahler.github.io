@@ -92,7 +92,7 @@
 
         <p>
           Different VAE architectures have been proposed to optimize latent representation quality. RAVE, proposed by Caillon et al, 
-          finds success in high-quality audio generation using VAEs mixed with GANs <a href="#RAVE">[3]</a>.
+          finds success in high-quality audio generation using VAEs mixed with GANs <a href="#RAVE">[1]</a>.
         </p>
 
         <p>
@@ -100,17 +100,17 @@
           remains underexplored.
           Research such as "How Good Are VAEs at Transfer
           Learning?" the representational similarity of VAE components (encoders and decoders) across 
-          different datasets using Centred Kernel Alignment (CKA) <a href="#autoencoders_transfer">[7]</a>. It concludes that encoders produce generic 
+          different datasets using Centred Kernel Alignment (CKA) <a href="#autoencoders_transfer">[2]</a>. It concludes that encoders produce generic 
           representations suitable for transfer, while decoders are more task-specific. This offers guidance on the roles of both VAE components and 
           methods for effective transfer learning, although this does not focus on the audio domain. Similarly, Hsu et al's work on
           "Learning Latent Representations for Speech Generation and Transformation" introduces 1D kernels to
-          distinguish between time and frequency dimensions <a href="#latent_reps_speech">[9]</a>. This offers a foundation for applying VAEs to audio, but the
+          distinguish between time and frequency dimensions <a href="#latent_reps_speech">[3]</a>. This offers a foundation for applying VAEs to audio, but the
           implications for cross-domain audio tasks are not fully explored.
         </p>
 
         <p>
           Strong techniques for improving VAE performance have been proposed, such as β-annealing, used by Sankarapandian et al. in 
-          "β-Annealed Variational Autoencoder for glitches" <a href="#beta_anneal">[14]</a>. β-annealing involves progressively 
+          "β-Annealed Variational Autoencoder for glitches" <a href="#beta_anneal">[4]</a>. β-annealing involves progressively 
           increasing the β-term during training to balance reconstruction quality and KL divergence. The β-term wieghs KL divergence to encourage 
           a normal latent space distribution. They find that this annealing schedule mimics the effects of gradually increasing 
           information capacity in Bottleneck-VAEs.
@@ -126,9 +126,9 @@
         architectures for the purposes of generation. This type of generation comparison in the audio domain remains
         even more under
         explored. Of the VAEs used to generate audio, few have been used for music. Those that focus on music generation such as 
-        Jukebox<a href="#jukebox">[19]</a> or RAVE<a href="#RAVE">[3]</a> typically use more complicated models and do not
+        Jukebox<a href="#jukebox">[5]</a> or RAVE<a href="#RAVE">[1]</a> typically use more complicated models and do not
         focus on the comparison of different encoder and decoder architectures; or they do not focus on the raw
-        wave representation of the data, such as MusicVAE, which uses MIDI inputs instead <a href="#musicvae">[45]</a>. 
+        wave representation of the data, such as MusicVAE, which uses MIDI inputs instead <a href="#musicvae">[6]</a>. 
         Additionally, many other advanced techniques have only properly been explored in the
         image domain.
         This includes using residual blocks in the encoder and decoder architecture, beta-annealing for the loss, as
@@ -143,8 +143,8 @@
         <h1>Data and preprocessing</h1>
         <p>
           For this project, we used audio data from the Medley-solos-DB, a database containing 21,572 mono audio clips
-          sampled at 44.1 kHz with a 32-bit depth <a href=#db>[88]</a>. Each audio clip has a fixed duration of 2972 milliseconds, or 65536
-          discrete-time samples, providing a uniform and manageable input size for our model. These clips can be split by
+          sampled at 44.1 kHz with a 32-bit depth <a href=#db>[7]</a>. Each audio clip has a fixed duration of 2972 milliseconds, or 65536
+          discrete-time samples, providing a uniform and manageable input size for our model. These clips are split by
           instrument, allowing us to isolate individual instruments for training and generation tasks.
         </p>
         <p>
@@ -215,7 +215,7 @@
           Appendix B.
         </p>
         <p>
-          The next architecture that we tested is a more audio-domain-aware CNN approach. In particular, drawing inspiration from Hsu W et al <a href="#1D-kernel">[1]</a>, we adapt the more fundemental convolutional architecture
+          The next architecture that we tested is a more audio-domain-aware CNN approach. In particular, drawing inspiration from Hsu W et al <a href="#1D-kernel">[3]</a>, we adapt the more fundemental convolutional architecture
           above to be more fitted for the audio domain by downsampling more gradually and using 1D kernels with varying sizes. Intuitively, the two dimensions of a spectrogram,
           time and frequency, represent very different things which is what separates the audio domain from the image domain. As such, it makes sense to treat them differently
           by allowing them to largely have seperate kernels. Additionally, we implement larger kernel sizes early in the encoder and deep in the decoder in the hopes
@@ -225,7 +225,7 @@
         </p>
         <p>
           The last architecture that we implemented was one that incorporates residual blocks into both the encoder and decoder, inspired by the work of Vahdat A. and Kautz J. on incorporating
-          residual blocks into the decoder of a VAE trained on the CelebA HQ dataset <a href="#resid">[2]</a>. Similar to the ADA conv architecture, the hope is that by incorporating skip connections
+          residual blocks into the decoder of a VAE trained on the CelebA HQ dataset <a href="#resid">[8]</a>. Similar to the ADA conv architecture, the hope is that by incorporating skip connections
           via residual blocks, we're able to better retain finer information from early convolutional layers that should be capturing details such as finer timbre information and quick note changes in the frequency
           and time dimensions respectively. Therefore, for the encoder, we implement early residual layers in order to capture this information. For the decoder, the residual blocks are more evenly spread
           throughout the layers or order to retain both salient features learned in the latent space as well as being able to successfully back out and decode more of the intermediate features and fine grained that the model learns. 
@@ -405,59 +405,52 @@
 
       <section id="implications_and_limitations">
         <h1>Implications, Limitations, and Future Work</h1>
-        <p>
-          While we were limited to training with relatively constrained resources, both in compute and time, in relation to the scale in which
-          we aimed to perform these experiments, our results show potential. Through the evauluation of these audio music domains across different 
+          
+          <p>
+            Through the evauluation of these audio music domains across different 
           architectures, we demonstrate how domain-aware modifications—such as 1D kernels and residual blocks—can enhance model performance for 
-          capturing the nuanced properties of audio data. The successful translation of latent spaces between instruments further highlights 
-          VAEs' promise in reducing retraining efforts for cross-domain tasks if sufficient similarities can be found.
-        </p>
+            capturing the nuanced properties of audio data. The successful translation of latent spaces between instruments further highlights 
+            VAEs' promise in reducing retraining efforts for cross-domain tasks if sufficient similarities can be found.
+          </p>
         <p>
           However, our experiments also revealed several limitations. While the transfer model was able to approximate 
-          reconstructions across domains, it still struggled with temporal precision in complex audio patterns such as those with quick note changes. 
-          This limitation suggests that the current architecture does not fully capture the nuanced temporal dynamics or distinct timbral 
-          features of certain instruments. Furthermore, the reliance on spectrogram-based inputs restricts the model's 
-          generalizability to raw audio data.
+          reconstructions across domains, it still struggled with temporal precision in complex audio patterns such as those with quick note changes.
         </p>
         <p>
           Another challenge lies in understanding and quantifying the similarities between latent spaces across domains. Although 
           our approach of using a small neural network to map between latent spaces showed promise, it requires further 
-          validation and generalization across diverse audio datasets and tasks. Additionally, the computational cost of 
-          training very domain-specific models presents a scalability concern, especially given the relatively large depth 
-          of some architectures we used. Further, the number of epochs needed to train effectively, the size of data available, and 
+          validation and generalization across diverse audio datasets and tasks. 
         </p> 
         
-        <h3>Future Work</h3>
         <p>
-          Building on the insights from this study, future research should prioritize several key areas. First, hybrid 
-          architectures that integrate convolutional layers for initial feature extraction with residual blocks for 
-          deeper processing merit exploration. These hybrids could combine the temporal precision of convolutional 
-          models with the harmonic richness captured by residual models, addressing their respective limitations.
-        </p>
-        <p>
-          Additionally, improving the temporal precision of residual models remains an important goal. This could 
-          involve fine-tuning the placement and configuration of residual connections or incorporating attention 
-          mechanisms to better capture rapid transitions and temporal dependencies in audio.
-        </p>
-        <p>
-          Future work should also investigate methods to generalize transfer learning across more diverse audio 
-          datasets and domains. This includes formalizing latent space similarity metrics and exploring 
-          techniques to ensure consistent latent space representations across models trained on different 
-          data. Extending the approach to raw audio inputs, rather than spectrograms, would enhance the 
-          practicality of VAEs in real-world applications.
-        </p>
-        <p>
-          Lastly, reducing computational overhead through more efficient training techniques or 
-          lightweight models is essential for scaling these methods to larger datasets and 
-          resource-limited environments. Exploring techniques like knowledge distillation or 
-          parameter-efficient fine-tuning could help achieve this goal.
-        </p>
-        <p>
-          By addressing these directions, future work can expand the applicability of 
-          VAEs in audio and other domains, unlocking their potential for broader 
-          generative and analytical tasks.
-        </p>
-      </section>
+          Although we were constrained by resources (both in compute and overall time), our results show potential. However, the computational 
+          cost of training these very domain-specific models presents a scalability concern, especially given the relatively large depth 
+          of some architectures we used. Beyond this, it may be diffucult to train models as the number of epochs needed to train effectively, 
+          the size of data available, and the size of each sample (roughly 2 second) scale. 
+          </p>
+        
+          <h3>Future Work</h3>
+          <p>
+            While our finding show promise, future research should explore hybrid architectures that integrate 
+            convolutional layers for initial feature extraction with residual blocks for deeper, more nuanced 
+            processing.  Hybrid designs like this may have the potential to combine the strengths of temporal precision 
+            from convolutional models and the harmonic accuracy seen using residual models.
+          </p>
+          <p>
+            Beyond this, improving the temporal accuracy of the residual models may be an area for advancement. This could 
+            include fine-tuning the placement and configuration of residual connections, as well as integrating attention 
+            mechanisms to better capture rapid note transitions and detailed temporal dependencies in audio data.
+          </p>
+          <p>
+            Expanding the scope of transfer learning research to include more diverse audio datasets and domains is another 
+            priority. Formalizing metrics to quantify latent space similarities and ensuring consistent representations across 
+            models trained on varied data will be crucial. More work may be done on efficiently translating between these latent spaces.
+          </p>
+          <p>
+            Lastly, addressing computational limitations is essential for scaling these approaches. We may attempt to reduce the size of these models
+            to reduce training overhead without limiting performance.
+          </p>
+        </section>
       
       
 
@@ -1113,26 +1106,21 @@
       <br>
       <section id="references" class="references">
         <h1>References</h1>
-        <a id="1D-kernel" href="https://arxiv.org/pdf/1704.04222">[1] Hsu W., et al</a>
+        <a id="RAVE" href="https://arxiv.org/pdf/2111.05011">[1] RAVE</a>
         <br>
-        <a id="resid" href="https://proceedings.neurips.cc/paper/2020/file/e3b21256183cf7c2c7a66be163579d37-Paper.pdf">[2] Vahdat A., Kautz J.</a>
+        <a id="autoencoders_transfer" href="https://arxiv.org/pdf/2304.10767">[2] How Good are Variational Autoencoders at Transfer Learning?</a>
         <br>
-        <a id="RAVE" href="https://arxiv.org/pdf/2111.05011">[3] RAVE</a>
-        <br> 
-        <a id="autoencoders_transfer" href="https://arxiv.org/pdf/2304.10767">[7] How Good are Variational Autoencoders at Transfer Learning?</a>
+        <a id="latent_reps_speech" href="https://arxiv.org/pdf/1704.04222">[3] Hsu W., et al, "Learning Latent Representations for Speech Generation and Transformation"</a>
         <br>
-        <a id="latent_reps_speech" href="https://arxiv.org/pdf/1704.04222">[9] Learning Latent Representations for Speech Generation and Transformation</a>
+        <a id="beta_anneal" href="https://ml4physicalsciences.github.io/2020/files/NeurIPS_ML4PS_2020_133.pdf">[4] β-Annealed Variational Autoencoder for glitches </a>
         <br>
-        <a id="beta_anneal" href="https://ml4physicalsciences.github.io/2020/files/NeurIPS_ML4PS_2020_133.pdf">[14] β-Annealed Variational Autoencoder for glitches </a>
+        <a id="jukebox" href="https://arxiv.org/pdf/2005.00341">[5] Jukebox: A Generative Model for Music </a>
         <br>
-        <a id="jukebox" href="https://arxiv.org/pdf/2005.00341">[19] Jukebox: A Generative Model for Music </a>
+        <a id="musicvae" href="https://magenta.tensorflow.org/music-vae">[6] MusicVAE: Creating a palette for musical scores with machine learning.</a>
         <br>
-        <a id="musicvae" href="https://magenta.tensorflow.org/music-vae">[45] MusicVAE: Creating a palette for musical scores with machine learning.</a>
+        <a id="db" href="https://zenodo.org/records/2582103">[7] Medley-solos-DB dataset</a>
         <br>
-        <a id="db" href="https://zenodo.org/records/2582103">[88] Medley-solos-DB dataset</a>
-
-        
-
+        <a id="resid" href="https://proceedings.neurips.cc/paper/2020/file/e3b21256183cf7c2c7a66be163579d37-Paper.pdf">[8] Vahdat A., Kautz J.</a> 
       </section>
     </div>
 
